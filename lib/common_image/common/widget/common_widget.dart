@@ -15,17 +15,18 @@ class FlatButtonWithIcon extends TextButton {
           onPressed: onPressed,
           clipBehavior: clipBehavior,
           focusNode: focusNode,
-          style: textColor != null
-              ? ButtonStyle(
-                  textStyle: MaterialStateProperty.all<TextStyle>(
-                  TextStyle(color: textColor),
-                ))
-              : null,
+          // style: textColor != null
+          //     ? ButtonStyle(
+          //         textStyle: MaterialStateProperty.all<TextStyle>(
+          //         TextStyle(color: textColor),
+          //       ))
+          //     : null,
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               icon,
-              const SizedBox(height: 4.0),
+              Expanded(child: SizedBox()),
+              // const SizedBox(height: 4.0),
               label,
             ],
           ),

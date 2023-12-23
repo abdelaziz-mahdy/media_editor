@@ -159,180 +159,184 @@ class _ImageEditorState extends State<ImageEditor> {
           padding: EdgeInsets.zero,
           child: SingleChildScrollView(
             scrollDirection: Axis.horizontal,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              mainAxisSize: MainAxisSize.max,
-              children: <Widget>[
-                FlatButtonWithIcon(
-                  icon: const Icon(Icons.crop),
-                  label: const Text(
-                    'Crop',
-                    style: TextStyle(fontSize: 10.0),
-                  ),
-                  textColor: Colors.white,
-                  onPressed: () {
-                    showDialog<void>(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return Column(
-                            children: <Widget>[
-                              const Expanded(
-                                child: SizedBox(),
-                              ),
-                              SizedBox(
-                                height: 100,
-                                child: ListView.builder(
-                                  shrinkWrap: true,
-                                  scrollDirection: Axis.horizontal,
-                                  padding: const EdgeInsets.all(20.0),
-                                  itemBuilder: (_, int index) {
-                                    final AspectRatioItem item =
-                                        _aspectRatios[index];
-                                    return GestureDetector(
-                                      child: AspectRatioWidget(
-                                        aspectRatio: item.value,
-                                        aspectRatioS: item.text,
-                                        isSelected: item == _aspectRatio,
-                                      ),
-                                      onTap: () {
-                                        Navigator.pop(context);
-                                        setState(() {
-                                          _aspectRatio = item;
-                                        });
-                                      },
-                                    );
-                                  },
-                                  itemCount: _aspectRatios.length,
+            child: Container(
+              constraints:
+                  BoxConstraints(minWidth: MediaQuery.of(context).size.width),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                // mainAxisSize: MainAxisSize.max,
+                children: <Widget>[
+                  FlatButtonWithIcon(
+                    icon: const Icon(Icons.crop),
+                    label: const Text(
+                      'Crop',
+                      style: TextStyle(fontSize: 10.0),
+                    ),
+                    textColor: Colors.white,
+                    onPressed: () {
+                      showDialog<void>(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return Column(
+                              children: <Widget>[
+                                const Expanded(
+                                  child: SizedBox(),
                                 ),
-                              ),
-                            ],
-                          );
-                        });
-                  },
-                ),
-                FlatButtonWithIcon(
-                  icon: const Icon(Icons.flip),
-                  label: const Text(
-                    'Flip',
-                    style: TextStyle(fontSize: 10.0),
-                  ),
-                  textColor: Colors.white,
-                  onPressed: () {
-                    editorKey.currentState!.flip();
-                  },
-                ),
-                FlatButtonWithIcon(
-                  icon: const Icon(Icons.rotate_left),
-                  label: const Text(
-                    'Rotate Left',
-                    style: TextStyle(fontSize: 8.0),
-                  ),
-                  textColor: Colors.white,
-                  onPressed: () {
-                    editorKey.currentState!.rotate(right: false);
-                  },
-                ),
-                FlatButtonWithIcon(
-                  icon: const Icon(Icons.rotate_right),
-                  label: const Text(
-                    'Rotate Right',
-                    style: TextStyle(fontSize: 8.0),
-                  ),
-                  textColor: Colors.white,
-                  onPressed: () {
-                    editorKey.currentState!.rotate(right: true);
-                  },
-                ),
-                FlatButtonWithIcon(
-                  icon: const Icon(Icons.rounded_corner_sharp),
-                  label: PopupMenuButton<EditorCropLayerPainter>(
-                    key: popupMenuKey,
-                    enabled: false,
-                    offset: const Offset(100, -300),
-                    initialValue: _cropLayerPainter,
-                    itemBuilder: (BuildContext context) {
-                      return <PopupMenuEntry<EditorCropLayerPainter>>[
-                        const PopupMenuItem<EditorCropLayerPainter>(
-                          value: EditorCropLayerPainter(),
-                          child: Row(
-                            children: <Widget>[
-                              Icon(
-                                Icons.rounded_corner_sharp,
-                                color: Colors.blue,
-                              ),
-                              SizedBox(
-                                width: 5,
-                              ),
-                              Text('Default'),
-                            ],
-                          ),
-                        ),
-                        const PopupMenuDivider(),
-                        const PopupMenuItem<EditorCropLayerPainter>(
-                          value: CustomEditorCropLayerPainter(),
-                          child: Row(
-                            children: <Widget>[
-                              Icon(
-                                Icons.circle,
-                                color: Colors.blue,
-                              ),
-                              SizedBox(
-                                width: 5,
-                              ),
-                              Text('Custom'),
-                            ],
-                          ),
-                        ),
-                        const PopupMenuDivider(),
-                        const PopupMenuItem<EditorCropLayerPainter>(
-                          value: CircleEditorCropLayerPainter(),
-                          child: Row(
-                            children: <Widget>[
-                              Icon(
-                                CupertinoIcons.circle,
-                                color: Colors.blue,
-                              ),
-                              SizedBox(
-                                width: 5,
-                              ),
-                              Text('Circle'),
-                            ],
-                          ),
-                        ),
-                      ];
+                                SizedBox(
+                                  height: 100,
+                                  child: ListView.builder(
+                                    shrinkWrap: true,
+                                    scrollDirection: Axis.horizontal,
+                                    padding: const EdgeInsets.all(20.0),
+                                    itemBuilder: (_, int index) {
+                                      final AspectRatioItem item =
+                                          _aspectRatios[index];
+                                      return GestureDetector(
+                                        child: AspectRatioWidget(
+                                          aspectRatio: item.value,
+                                          aspectRatioS: item.text,
+                                          isSelected: item == _aspectRatio,
+                                        ),
+                                        onTap: () {
+                                          Navigator.pop(context);
+                                          setState(() {
+                                            _aspectRatio = item;
+                                          });
+                                        },
+                                      );
+                                    },
+                                    itemCount: _aspectRatios.length,
+                                  ),
+                                ),
+                              ],
+                            );
+                          });
                     },
-                    onSelected: (EditorCropLayerPainter value) {
-                      if (_cropLayerPainter != value) {
-                        setState(() {
-                          if (value is CircleEditorCropLayerPainter) {
-                            _aspectRatio = _aspectRatios[2];
-                          }
-                          _cropLayerPainter = value;
-                        });
-                      }
+                  ),
+                  FlatButtonWithIcon(
+                    icon: const Icon(Icons.flip),
+                    label: const Text(
+                      'Flip',
+                      style: TextStyle(fontSize: 10.0),
+                    ),
+                    textColor: Colors.white,
+                    onPressed: () {
+                      editorKey.currentState!.flip();
                     },
-                    child: const Text(
-                      'Painter',
+                  ),
+                  FlatButtonWithIcon(
+                    icon: const Icon(Icons.rotate_left),
+                    label: const Text(
+                      'Rotate Left',
                       style: TextStyle(fontSize: 8.0),
                     ),
+                    textColor: Colors.white,
+                    onPressed: () {
+                      editorKey.currentState!.rotate(right: false);
+                    },
                   ),
-                  textColor: Colors.white,
-                  onPressed: () {
-                    popupMenuKey.currentState!.showButtonMenu();
-                  },
-                ),
-                FlatButtonWithIcon(
-                  icon: const Icon(Icons.restore),
-                  label: const Text(
-                    'Reset',
-                    style: TextStyle(fontSize: 10.0),
+                  FlatButtonWithIcon(
+                    icon: const Icon(Icons.rotate_right),
+                    label: const Text(
+                      'Rotate Right',
+                      style: TextStyle(fontSize: 8.0),
+                    ),
+                    textColor: Colors.white,
+                    onPressed: () {
+                      editorKey.currentState!.rotate(right: true);
+                    },
                   ),
-                  textColor: Colors.white,
-                  onPressed: () {
-                    editorKey.currentState!.reset();
-                  },
-                ),
-              ],
+                  FlatButtonWithIcon(
+                    icon: const Icon(Icons.rounded_corner_sharp),
+                    label: PopupMenuButton<EditorCropLayerPainter>(
+                      key: popupMenuKey,
+                      enabled: false,
+                      offset: const Offset(100, -300),
+                      initialValue: _cropLayerPainter,
+                      itemBuilder: (BuildContext context) {
+                        return <PopupMenuEntry<EditorCropLayerPainter>>[
+                          const PopupMenuItem<EditorCropLayerPainter>(
+                            value: EditorCropLayerPainter(),
+                            child: Row(
+                              children: <Widget>[
+                                Icon(
+                                  Icons.rounded_corner_sharp,
+                                  color: Colors.blue,
+                                ),
+                                SizedBox(
+                                  width: 5,
+                                ),
+                                Text('Default'),
+                              ],
+                            ),
+                          ),
+                          const PopupMenuDivider(),
+                          const PopupMenuItem<EditorCropLayerPainter>(
+                            value: CustomEditorCropLayerPainter(),
+                            child: Row(
+                              children: <Widget>[
+                                Icon(
+                                  Icons.circle,
+                                  color: Colors.blue,
+                                ),
+                                SizedBox(
+                                  width: 5,
+                                ),
+                                Text('Custom'),
+                              ],
+                            ),
+                          ),
+                          const PopupMenuDivider(),
+                          const PopupMenuItem<EditorCropLayerPainter>(
+                            value: CircleEditorCropLayerPainter(),
+                            child: Row(
+                              children: <Widget>[
+                                Icon(
+                                  CupertinoIcons.circle,
+                                  color: Colors.blue,
+                                ),
+                                SizedBox(
+                                  width: 5,
+                                ),
+                                Text('Circle'),
+                              ],
+                            ),
+                          ),
+                        ];
+                      },
+                      onSelected: (EditorCropLayerPainter value) {
+                        if (_cropLayerPainter != value) {
+                          setState(() {
+                            if (value is CircleEditorCropLayerPainter) {
+                              _aspectRatio = _aspectRatios[2];
+                            }
+                            _cropLayerPainter = value;
+                          });
+                        }
+                      },
+                      child: const Text(
+                        'Painter',
+                        style: TextStyle(fontSize: 8.0),
+                      ),
+                    ),
+                    textColor: Colors.white,
+                    onPressed: () {
+                      popupMenuKey.currentState!.showButtonMenu();
+                    },
+                  ),
+                  FlatButtonWithIcon(
+                    icon: const Icon(Icons.restore),
+                    label: const Text(
+                      'Reset',
+                      style: TextStyle(fontSize: 10.0),
+                    ),
+                    textColor: Colors.white,
+                    onPressed: () {
+                      editorKey.currentState!.reset();
+                    },
+                  ),
+                ],
+              ),
             ),
           ),
         ),

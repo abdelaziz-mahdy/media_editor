@@ -16,9 +16,11 @@ Future<void> main() async {
   testGoldens('Screenshots', (tester) async {
     await tester.pumpWidgetBuilder(const MyApp());
 
-    await multiScreenGolden(tester, "Screenshots".toLowerCase(), devices: [
-      Device.phone,
-      Device.tabletLandscape.copyWith(name: 'desktop'),
-    ]);
+    await multiScreenGolden(tester, "Screenshots".toLowerCase(),
+        customPump: (p0) => tester.pumpAndSettle(),
+        devices: [
+          Device.phone,
+          Device.tabletLandscape.copyWith(name: 'desktop'),
+        ]);
   });
 }
