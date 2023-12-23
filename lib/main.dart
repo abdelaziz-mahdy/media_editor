@@ -13,6 +13,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return OKToast(
+      position: ToastPosition.bottom,
       child: MaterialApp(
           title: 'Flutter Demo',
           theme: ThemeData(

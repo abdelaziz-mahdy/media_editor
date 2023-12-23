@@ -1,16 +1,12 @@
-@JS()
-library image_saver;
-
 // ignore:avoid_web_libraries_in_flutter
 import 'dart:async';
 import 'dart:convert';
-import 'dart:html';
 
 import 'dart:typed_data';
 import 'package:cross_file/cross_file.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/widgets.dart';
-import 'package:js/js.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:media_editor/common_image/custom_image.dart';
 
 class ImageSaver {
   ImageSaver._();
@@ -22,22 +18,18 @@ class ImageSaver {
   }
 }
 
-Future<Uint8List> pickImage(BuildContext context) async {
-  final Completer<Uint8List> completer = Completer<Uint8List>();
-  final InputElement input = document.createElement('input') as InputElement;
+Future<CustomImage> pickImage(BuildContext context) async {
+  FilePickerResult? result = await FilePicker.platform.pickFiles();
+  if (result == null) {
+    throw Exception('No file selected');
+  }
 
-  input
-    ..type = 'file'
-    ..accept = 'image/*';
-  input.onChange.listen((Event e) async {
-    final List<File> files = input.files!;
-    final FileReader reader = FileReader();
-    reader.readAsArrayBuffer(files[0]);
-    reader.onError
-        .listen((ProgressEvent error) => completer.completeError(error));
-    await reader.onLoad.first;
-    completer.complete(reader.result as Uint8List?);
-  });
-  input.click();
-  return completer.future;
+  if (result.files.single.bytes == null) {
+    throw Exception('Cannot get image bytes');
+  }
+  final CustomImage image = CustomImage(
+    name: result.files.single.name,
+    data: result.files.single.bytes!,
+  );
+  return image;
 }

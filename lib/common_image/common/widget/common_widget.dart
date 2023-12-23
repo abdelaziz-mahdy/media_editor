@@ -122,3 +122,29 @@ class CommonCircularProgressIndicator extends StatelessWidget {
     );
   }
 }
+
+class ImageTypeDropdown extends StatelessWidget {
+  final String currentValue;
+  final Function(String) onSelected;
+
+  const ImageTypeDropdown({Key? key, required this.currentValue, required this.onSelected}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return DropdownButton<String>(
+      value: currentValue,
+      onChanged: (String? newValue) {
+        if (newValue != null) {
+          onSelected(newValue);
+        }
+      },
+      items: <String>['JPG', 'PNG', 'GIF', 'BMP', 'TGA', 'PVR', 'ICO']
+          .map<DropdownMenuItem<String>>((String value) {
+        return DropdownMenuItem<String>(
+          value: value,
+          child: Text(value),
+        );
+      }).toList(),
+    );
+  }
+}

@@ -21,12 +21,14 @@ class EditImageInfo {
     this.data,
     this.imageType,
   );
+
   final Uint8List? data;
   final ImageType imageType;
 }
 
 Future<EditImageInfo> cropImageDataWithDartLibrary(
-    {required ExtendedImageEditorState state}) async {
+    {required ExtendedImageEditorState state,
+    String imageEncoding = 'jpg'}) async {
   print('dart library start cropping');
 
   ///crop rect base on raw image
@@ -135,17 +137,24 @@ Future<EditImageInfo> cropImageDataWithDartLibrary(
   final DateTime time4 = DateTime.now();
   final bool onlyOneFrame = src!.numFrames == 1;
 
-  //If there's only one frame, encode it to jpg.
-  if (kIsWeb) {
-    fileData =
-        onlyOneFrame ? encodeJpg(Image.from(src.frames.first)) : encodeGif(src);
-  } else {
-    //fileData = await lb.run<List<int>, Image>(encodeJpg, src);
-    fileData = (onlyOneFrame
-        ? await compute(encodeJpg, Image.from(src.frames.first))
-        : await compute(encodeGif, src));
-  }
+  // //If there's only one frame, encode it to jpg.
+  // if (kIsWeb) {
+  //   fileData =
+  //       onlyOneFrame ? encodeJpg(Image.from(src.frames.first)) : encodeGif(src);
+  // } else {
+  //   //fileData = await lb.run<List<int>, Image>(encodeJpg, src);
+  //   fileData = (onlyOneFrame
+  //       ? await compute(encodeJpg, Image.from(src.frames.first))
+  //       : await compute(encodeGif, src));
+  // }
+  Image imageToEncode = onlyOneFrame ? Image.from(src.frames.first) : src;
 
+  try {
+    fileData = await encodeImage(imageToEncode, imageEncoding);
+  } catch (e) {
+    // Handle the error (e.g., unsupported image type)
+    print('Error encoding image: $e');
+  }
   final DateTime time5 = DateTime.now();
   print('${time5.difference(time4)} : encode');
   print('${time5.difference(time1)} : total time');
@@ -155,96 +164,9 @@ Future<EditImageInfo> cropImageDataWithDartLibrary(
   );
 }
 
-Future<EditImageInfo> cropImageDataWithNativeLibrary(
-    {required ExtendedImageEditorState state}) async {
-  print('native library start cropping');
-  Rect cropRect = state.getCropRect()!;
-  if (state.widget.extendedImageState.imageProvider is ExtendedResizeImage) {
-    final ImmutableBuffer buffer =
-        await ImmutableBuffer.fromUint8List(state.rawImageData);
-    final ImageDescriptor descriptor = await ImageDescriptor.encoded(buffer);
 
-    final double widthRatio = descriptor.width / state.image!.width;
-    final double heightRatio = descriptor.height / state.image!.height;
-    cropRect = Rect.fromLTRB(
-      cropRect.left * widthRatio,
-      cropRect.top * heightRatio,
-      cropRect.right * widthRatio,
-      cropRect.bottom * heightRatio,
-    );
-  }
 
-  final EditActionDetails action = state.editAction!;
 
-  final int rotateAngle = action.rotateAngle.toInt();
-  final bool flipHorizontal = action.flipY;
-  final bool flipVertical = action.flipX;
-  final Uint8List img = state.rawImageData;
-
-  final ImageEditorOption option = ImageEditorOption();
-
-  if (action.needCrop) {
-    option.addOption(ClipOption.fromRect(cropRect));
-  }
-
-  if (action.needFlip) {
-    option.addOption(
-        FlipOption(horizontal: flipHorizontal, vertical: flipVertical));
-  }
-
-  if (action.hasRotateAngle) {
-    option.addOption(RotateOption(rotateAngle));
-  }
-
-  final DateTime start = DateTime.now();
-  final Uint8List? result = await ImageEditor.editImage(
-    image: img,
-    imageEditorOption: option,
-  );
-
-  print('${DateTime.now().difference(start)} ：total time');
-  return EditImageInfo(result, ImageType.jpg);
-}
-
-Future<dynamic> isolateDecodeImage(List<int> data) async {
-  final ReceivePort response = ReceivePort();
-  await Isolate.spawn(_isolateDecodeImage, response.sendPort);
-  final dynamic sendPort = await response.first;
-  final ReceivePort answer = ReceivePort();
-  // ignore: always_specify_types
-  sendPort.send([answer.sendPort, data]);
-  return answer.first;
-}
-
-Future<dynamic> isolateEncodeImage(Image src) async {
-  final ReceivePort response = ReceivePort();
-  await Isolate.spawn(_isolateEncodeImage, response.sendPort);
-  final dynamic sendPort = await response.first;
-  final ReceivePort answer = ReceivePort();
-  // ignore: always_specify_types
-  sendPort.send([answer.sendPort, src]);
-  return answer.first;
-}
-
-void _isolateDecodeImage(SendPort port) {
-  final ReceivePort rPort = ReceivePort();
-  port.send(rPort.sendPort);
-  rPort.listen((dynamic message) {
-    final SendPort send = message[0] as SendPort;
-    final List<int> data = message[1] as List<int>;
-    send.send(decodeImage(Uint8List.fromList(data)));
-  });
-}
-
-void _isolateEncodeImage(SendPort port) {
-  final ReceivePort rPort = ReceivePort();
-  port.send(rPort.sendPort);
-  rPort.listen((dynamic message) {
-    final SendPort send = message[0] as SendPort;
-    final Image src = message[1] as Image;
-    send.send(encodeJpg(src));
-  });
-}
 
 /// it may be failed, due to Cross-domain
 Future<Uint8List> _loadNetwork(ExtendedNetworkImageProvider key) async {
@@ -262,5 +184,31 @@ Future<Uint8List> _loadNetwork(ExtendedNetworkImageProvider key) async {
         StateError('User cancel request ${key.url}.'));
   } catch (e) {
     return Future<Uint8List>.error(StateError('failed load ${key.url}. \n $e'));
+  }
+}
+
+typedef ImageEncoder = Future<Uint8List> Function(Image image);
+
+Future<Uint8List> encodeImage(Image image, String imageType) async {
+  switch (imageType.toLowerCase()) {
+    case 'jpg':
+      return compute(encodeJpg, image);
+    case 'png':
+      return compute(encodePng, image);
+    case 'gif':
+      return compute(encodeGif, image);
+    case 'bmp':
+      return compute(encodeBmp, image);
+    case 'tga':
+      return compute(encodeTga, image);
+    case 'pvr':
+      // Assuming you have a function to encode PVR.
+      // If not, you'll need to implement or find a suitable library.
+      return compute(encodePvr, image);
+    case 'ico':
+      return compute(encodeIco, image);
+    // Add other cases for different formats as needed
+    default:
+      throw UnsupportedError('Unsupported image type');
   }
 }

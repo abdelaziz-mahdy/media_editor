@@ -6,6 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:media_editor/common_image/custom_image.dart';
 import 'package:oktoast/oktoast.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -39,8 +40,9 @@ class _ImageEditorState extends State<ImageEditor> {
   ];
   AspectRatioItem? _aspectRatio;
   bool _cropping = false;
-
+  String _imageType = "JPG";
   EditorCropLayerPainter? _cropLayerPainter;
+  CustomImage? _memoryImage;
 
   @override
   void initState() {
@@ -64,10 +66,13 @@ class _ImageEditorState extends State<ImageEditor> {
                 }),
         title: const Text('image editor'),
         actions: <Widget>[
-          IconButton(
-            icon: const Icon(Icons.photo_library),
-            onPressed: _getImage,
-          ),
+          ImageTypeDropdown(
+              currentValue: _imageType,
+              onSelected: (value) {
+                setState(() {
+                  _imageType = value;
+                });
+              }),
           IconButton(
             icon: const Icon(Icons.done),
             onPressed: () {
@@ -84,7 +89,7 @@ class _ImageEditorState extends State<ImageEditor> {
         Expanded(
           child: _memoryImage != null
               ? ExtendedImage.memory(
-                  _memoryImage!,
+                  _memoryImage!.data,
                   fit: BoxFit.contain,
                   mode: ExtendedImageMode.editor,
                   enableLoadState: true,
@@ -105,7 +110,11 @@ class _ImageEditorState extends State<ImageEditor> {
                   child: DropTarget(
                     onDragDone: (details) async {
                       if (details.files.isNotEmpty) {
-                        setImage(await details.files.first.readAsBytes());
+                        CustomImage image = CustomImage(
+                          name: details.files.first.name,
+                          data: await details.files.first.readAsBytes(),
+                        );
+                        setImage(image);
                       }
                     },
                     child: GestureDetector(
@@ -452,24 +461,17 @@ class _ImageEditorState extends State<ImageEditor> {
 
       late EditImageInfo imageInfo;
 
-      /// native library
-      if (useNative) {
-        imageInfo = await cropImageDataWithNativeLibrary(
-            state: editorKey.currentState!);
-      } else {
-        ///delay due to cropImageDataWithDartLibrary is time consuming on main thread
-        ///it will block showBusyingDialog
-        ///if you don't want to block ui, use compute/isolate,but it costs more time.
-        //await Future.delayed(Duration(milliseconds: 200));
+      ///delay due to cropImageDataWithDartLibrary is time consuming on main thread
+      ///it will block showBusyingDialog
+      ///if you don't want to block ui, use compute/isolate,but it costs more time.
+      //await Future.delayed(Duration(milliseconds: 200));
 
-        ///if you don't want to block ui, use compute/isolate,but it costs more time.
-        imageInfo =
-            await cropImageDataWithDartLibrary(state: editorKey.currentState!);
-      }
+      ///if you don't want to block ui, use compute/isolate,but it costs more time.
+      imageInfo = await cropImageDataWithDartLibrary(
+          state: editorKey.currentState!, imageEncoding: _imageType);
 
       final String? filePath = await ImageSaver.save(
-          'extended_image_cropped_image.${imageInfo.imageType == ImageType.jpg ? 'jpg' : 'gif'}',
-          imageInfo.data!);
+          '${_memoryImage!.name}.${_imageType.toLowerCase()}', imageInfo.data!);
       // var filePath = await ImagePickerSaver.saveFile(fileData: fileData);
 
       msg = 'save image : $filePath';
@@ -483,12 +485,15 @@ class _ImageEditorState extends State<ImageEditor> {
     _cropping = false;
   }
 
-  Uint8List? _memoryImage;
   Future<void> _getImage() async {
-    setImage(await pickImage(context));
+    try {
+      setImage(await pickImage(context));
+    } catch (e) {
+      showToast("error: $e");
+    }
   }
 
-  void setImage(Uint8List? image) {
+  void setImage(CustomImage? image) {
     _memoryImage = image;
     //when back to current page, may be editorKey.currentState is not ready.
     Future<void>.delayed(const Duration(milliseconds: 200), () {
