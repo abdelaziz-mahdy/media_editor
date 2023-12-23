@@ -1,16 +1,36 @@
 # media_editor
 
-A new Flutter project.
+## Overview
+
+This Flutter application is a versatile tool for image editing, designed to offer a user-friendly interface for manipulating images. Whether you're a professional looking to quickly edit images on the go, or a hobbyist wanting to play with your photos, this app provides essential features to get the job done.
+
+## Features
+
+### Done
+- **Image Editing**: Intuitive tools for enhancing your images.
+  - **Cropping**: Easily crop images to your preferred size.
+  - **Rotation**: Adjust the orientation of your images with simple rotation tools.
+  - **Exporting**: Ability to export images in various formats for different use cases.
+
+### To-Do
+- **Video Editing**: Future updates will introduce video editing capabilities, expanding the versatility of the app.
+
+## Screenshots
+
+Below are some screenshots of the app in action. These images showcase the application's interface on different devices:
+
+| Description       | Desktop View                                      | Phone View                                        |
+|-------------------|---------------------------------------------------|---------------------------------------------------|
+| **Main Interface**| ![Desktop Screenshot](test/goldens/screenshots.desktop.png) | ![Phone Screenshot](test/goldens/screenshots.phone.png) |
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+To get started with this app, clone the repository and build the project in your Flutter environment. The application is easy to set up and requires minimal configuration.
 
-A few resources to get you started if this is your first Flutter project:
+## Contribution
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+Contributions to this project are welcome. Whether it's improving existing features or suggesting new ones, feel free to open an issue or submit a pull request.
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## License
+
+This project is licensed under the [MIT License](LICENSE).
