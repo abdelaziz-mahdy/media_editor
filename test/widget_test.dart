@@ -14,11 +14,11 @@ Future<void> main() async {
   await loadAppFonts();
 
   testGoldens('Screenshots ', (tester) async {
-    Widget app = MyApp();
+    Widget app = const MyApp();
     await multiScreenGolden(tester, "Screenshots".toLowerCase(),
         customPump: (tester) => tester.pumpFrames(
               app,
-              Duration(seconds: 5),
+              const Duration(seconds: 5),
             ),
         devices: [
           Device.phone,

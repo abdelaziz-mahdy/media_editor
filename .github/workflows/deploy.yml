@@ -29,9 +29,6 @@ jobs:
       - name: Install Flutter Dependencies
         run: flutter pub get
 
-        
-      - name: setup chrome
-        uses: nanasess/setup-chromedriver@v2
       
 
       - name: 🎯 Take screenshots

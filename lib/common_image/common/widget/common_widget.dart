@@ -40,7 +40,10 @@ class AspectRatioItem {
 
 class AspectRatioWidget extends StatelessWidget {
   const AspectRatioWidget(
-      {super.key, this.aspectRatioS, this.aspectRatio, this.isSelected = false});
+      {super.key,
+      this.aspectRatioS,
+      this.aspectRatio,
+      this.isSelected = false});
   final String? aspectRatioS;
   final double? aspectRatio;
   final bool isSelected;
@@ -127,7 +130,9 @@ class ImageTypeDropdown extends StatelessWidget {
   final String currentValue;
   final Function(String) onSelected;
 
-  const ImageTypeDropdown({Key? key, required this.currentValue, required this.onSelected}) : super(key: key);
+  const ImageTypeDropdown(
+      {Key? key, required this.currentValue, required this.onSelected})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {

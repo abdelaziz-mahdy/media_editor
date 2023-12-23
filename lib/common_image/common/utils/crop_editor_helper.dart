@@ -1,5 +1,4 @@
 //import 'dart:typed_data';
-import 'dart:isolate';
 import 'dart:ui';
 
 // import 'package:isolate/load_balancer.dart';
@@ -9,7 +8,6 @@ import 'package:flutter/foundation.dart';
 // ignore: implementation_imports
 import 'package:http_client_helper/http_client_helper.dart';
 import 'package:image/image.dart';
-import 'package:image_editor/image_editor.dart';
 
 // final Future<LoadBalancer> loadBalancer =
 //     LoadBalancer.create(1, IsolateRunner.spawn);
@@ -156,7 +154,7 @@ Future<EditImageInfo> cropImageDataWithDartLibrary(
     print('Error encoding image: $e');
   }
   final DateTime time5 = DateTime.now();
-  print('${time5.difference(time4)} : encode to ${imageEncoding}');
+  print('${time5.difference(time4)} : encode to $imageEncoding');
   print('${time5.difference(time1)} : total time');
   return EditImageInfo(
     Uint8List.fromList(fileData!),
