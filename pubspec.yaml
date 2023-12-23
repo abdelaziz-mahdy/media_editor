@@ -1,5 +1,5 @@
 name: media_editor
-description: "A new Flutter project."
+description: "This Flutter application is a versatile tool for image editing, designed to offer a user-friendly interface for manipulating images. Whether you're a professional looking to quickly edit images on the go, or a hobbyist wanting to play with your photos, this app provides essential features to get the job done."
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev

@@ -5,7 +5,7 @@
     "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "description": "This Flutter application is a versatile tool for image editing, designed to offer a user-friendly interface for manipulating images. Whether you're a professional looking to quickly edit images on the go, or a hobbyist wanting to play with your photos, this app provides essential features to get the job done.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [
