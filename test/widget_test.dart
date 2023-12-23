@@ -13,16 +13,12 @@ import 'package:media_editor/main.dart';
 Future<void> main() async {
   await loadAppFonts();
 
-  testGoldens('Screenshots ', (tester) async {
-    Widget app = const MyApp();
-    await multiScreenGolden(tester, "Screenshots".toLowerCase(),
-        customPump: (tester) => tester.pumpFrames(
-              app,
-              const Duration(seconds: 5),
-            ),
-        devices: [
-          Device.phone,
-          Device.tabletLandscape.copyWith(name: 'desktop'),
-        ]);
+  testGoldens('Screenshots', (tester) async {
+    await tester.pumpWidgetBuilder(const MyApp());
+
+    await multiScreenGolden(tester, "Screenshots".toLowerCase(), devices: [
+      Device.phone,
+      Device.tabletLandscape.copyWith(name: 'desktop'),
+    ]);
   });
 }
