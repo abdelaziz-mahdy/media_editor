@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:desktop_drop/desktop_drop.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
@@ -12,16 +13,17 @@ import 'common_image/common/image_picker/image_picker.dart';
 import 'common_image/common/utils/crop_editor_helper.dart';
 import 'common_image/common/widget/common_widget.dart';
 
+// THIS editor is from the extended_image package example
+// https://pub.dev/packages/extended_image
 
-
-class ImageEditorDemo extends StatefulWidget {
-  const ImageEditorDemo({super.key});
+class ImageEditor extends StatefulWidget {
+  const ImageEditor({super.key});
 
   @override
-  _ImageEditorDemoState createState() => _ImageEditorDemoState();
+  _ImageEditorState createState() => _ImageEditorState();
 }
 
-class _ImageEditorDemoState extends State<ImageEditorDemo> {
+class _ImageEditorState extends State<ImageEditor> {
   final GlobalKey<ExtendedImageEditorState> editorKey =
       GlobalKey<ExtendedImageEditorState>();
   final GlobalKey<PopupMenuButtonState<EditorCropLayerPainter>> popupMenuKey =
@@ -51,7 +53,16 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('image editor demo'),
+        leading: _memoryImage == null
+            ? null
+            : IconButton(
+                icon: const Icon(Icons.delete),
+                onPressed: () {
+                  setState(() {
+                    _memoryImage = null;
+                  });
+                }),
+        title: const Text('image editor'),
         actions: <Widget>[
           IconButton(
             icon: const Icon(Icons.photo_library),
@@ -90,23 +101,44 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
                   },
                   cacheRawData: true,
                 )
-              : ExtendedImage.asset(
-                  'assets/image.jpg',
-                  fit: BoxFit.contain,
-                  mode: ExtendedImageMode.editor,
-                  enableLoadState: true,
-                  extendedImageEditorKey: editorKey,
-                  initEditorConfigHandler: (ExtendedImageState? state) {
-                    return EditorConfig(
-                      maxScale: 8.0,
-                      cropRectPadding: const EdgeInsets.all(20.0),
-                      hitTestSize: 20.0,
-                      cropLayerPainter: _cropLayerPainter!,
-                      initCropRectType: InitCropRectType.imageRect,
-                      cropAspectRatio: _aspectRatio!.value,
-                    );
-                  },
-                  cacheRawData: true,
+              : Center(
+                  child: DropTarget(
+                    onDragDone: (details) async {
+                      if (details.files.isNotEmpty) {
+                        setImage(await details.files.first.readAsBytes());
+                      }
+                    },
+                    child: GestureDetector(
+                      onTap: () async {
+                        _getImage();
+                      },
+                      child: Container(
+                        width: MediaQuery.of(context).size.width,
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.grey),
+                          borderRadius: BorderRadius.circular(8.0),
+                        ),
+                        child: const Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.upload_file,
+                              size: 50,
+                              color: Colors.grey,
+                            ),
+                            SizedBox(height: 16),
+                            Text(
+                              "Pick or drop file here",
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
                 ),
         ),
       ]),
@@ -206,14 +238,11 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
                   key: popupMenuKey,
                   enabled: false,
                   offset: const Offset(100, -300),
-                  child: const Text(
-                    'Painter',
-                    style: TextStyle(fontSize: 8.0),
-                  ),
                   initialValue: _cropLayerPainter,
                   itemBuilder: (BuildContext context) {
                     return <PopupMenuEntry<EditorCropLayerPainter>>[
                       const PopupMenuItem<EditorCropLayerPainter>(
+                        value: EditorCropLayerPainter(),
                         child: Row(
                           children: <Widget>[
                             Icon(
@@ -226,10 +255,10 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
                             Text('Default'),
                           ],
                         ),
-                        value: EditorCropLayerPainter(),
                       ),
                       const PopupMenuDivider(),
                       const PopupMenuItem<EditorCropLayerPainter>(
+                        value: CustomEditorCropLayerPainter(),
                         child: Row(
                           children: <Widget>[
                             Icon(
@@ -242,10 +271,10 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
                             Text('Custom'),
                           ],
                         ),
-                        value: CustomEditorCropLayerPainter(),
                       ),
                       const PopupMenuDivider(),
                       const PopupMenuItem<EditorCropLayerPainter>(
+                        value: CircleEditorCropLayerPainter(),
                         child: Row(
                           children: <Widget>[
                             Icon(
@@ -258,7 +287,6 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
                             Text('Circle'),
                           ],
                         ),
-                        value: CircleEditorCropLayerPainter(),
                       ),
                     ];
                   },
@@ -272,6 +300,10 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
                       });
                     }
                   },
+                  child: const Text(
+                    'Painter',
+                    style: TextStyle(fontSize: 8.0),
+                  ),
                 ),
                 textColor: Colors.white,
                 onPressed: () {
@@ -434,6 +466,7 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
         imageInfo =
             await cropImageDataWithDartLibrary(state: editorKey.currentState!);
       }
+
       final String? filePath = await ImageSaver.save(
           'extended_image_cropped_image.${imageInfo.imageType == ImageType.jpg ? 'jpg' : 'gif'}',
           imageInfo.data!);
@@ -452,11 +485,15 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
 
   Uint8List? _memoryImage;
   Future<void> _getImage() async {
-    _memoryImage = await pickImage(context);
+    setImage(await pickImage(context));
+  }
+
+  void setImage(Uint8List? image) {
+    _memoryImage = image;
     //when back to current page, may be editorKey.currentState is not ready.
     Future<void>.delayed(const Duration(milliseconds: 200), () {
       setState(() {
-        editorKey.currentState!.reset();
+        editorKey.currentState?.reset();
       });
     });
   }

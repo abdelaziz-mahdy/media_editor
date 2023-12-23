@@ -37,6 +37,8 @@ dependencies:
   wechat_assets_picker: any
   image: any
   image_editor: any
+  desktop_drop: ^0.4.4
+  cross_file: ^0.3.3+8
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2

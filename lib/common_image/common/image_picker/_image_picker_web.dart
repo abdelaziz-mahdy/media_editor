@@ -3,19 +3,21 @@ library image_saver;
 
 // ignore:avoid_web_libraries_in_flutter
 import 'dart:async';
+import 'dart:convert';
 import 'dart:html';
 
 import 'dart:typed_data';
+import 'package:cross_file/cross_file.dart';
 import 'package:flutter/widgets.dart';
 import 'package:js/js.dart';
-
-@JS()
-external void _exportRaw(String key, Uint8List value);
+import 'package:url_launcher/url_launcher.dart';
 
 class ImageSaver {
   ImageSaver._();
+
   static Future<String> save(String name, Uint8List fileData) async {
-    _exportRaw(name, fileData);
+    XFile xFile = XFile.fromData(fileData, name: name);
+    xFile.saveTo('');
     return name;
   }
 }

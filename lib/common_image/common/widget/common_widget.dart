@@ -40,7 +40,7 @@ class AspectRatioItem {
 
 class AspectRatioWidget extends StatelessWidget {
   const AspectRatioWidget(
-      {this.aspectRatioS, this.aspectRatio, this.isSelected = false});
+      {super.key, this.aspectRatioS, this.aspectRatio, this.isSelected = false});
   final String? aspectRatioS;
   final double? aspectRatio;
   final bool isSelected;
@@ -107,6 +107,8 @@ class AspectRatioPainter extends CustomPainter {
 }
 
 class CommonCircularProgressIndicator extends StatelessWidget {
+  const CommonCircularProgressIndicator({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Container(
