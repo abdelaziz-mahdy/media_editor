@@ -156,17 +156,13 @@ Future<EditImageInfo> cropImageDataWithDartLibrary(
     print('Error encoding image: $e');
   }
   final DateTime time5 = DateTime.now();
-  print('${time5.difference(time4)} : encode');
+  print('${time5.difference(time4)} : encode to ${imageEncoding}');
   print('${time5.difference(time1)} : total time');
   return EditImageInfo(
     Uint8List.fromList(fileData!),
     onlyOneFrame ? ImageType.jpg : ImageType.gif,
   );
 }
-
-
-
-
 
 /// it may be failed, due to Cross-domain
 Future<Uint8List> _loadNetwork(ExtendedNetworkImageProvider key) async {
