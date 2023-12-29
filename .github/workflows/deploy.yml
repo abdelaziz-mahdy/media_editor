@@ -25,8 +25,8 @@ jobs:
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          channel: "stable"
-          # channel: "master"
+          # channel: "stable"
+          channel: "master"
           cache: true
 
       - name: Install Flutter Dependencies
@@ -38,17 +38,15 @@ jobs:
         run: |
           flutter test --update-goldens
       
-      - name: Build Flutter Web
-        run: flutter build web --release --base-href "/media_editor/" --web-renderer canvaskit
-      # - name: Build Flutter Web wasm
-      #   run: flutter build web --wasm --release --base-href "/bouncy_ball_physics/" --web-renderer canvaskit
+
+      - name: Build Flutter Web wasm
+        run: flutter build web --wasm --release --base-href "/media_editor/" --web-renderer canvaskit
       - name: Deploy to GitHub Pages
         if: github.ref == 'refs/heads/main'
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./build/web
-          # publish_dir: ./build/web_wasm
+          publish_dir: ./build/web_wasm
       - name: Fetch and Merge Changes from Main
         if: github.ref == 'refs/heads/main'
 
