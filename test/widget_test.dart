@@ -5,7 +5,6 @@
 // gestures. You can also use WidgetTester to find child widgets in the widget
 // tree, read text, and verify that the values of widget properties are correct.
 
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:golden_toolkit/golden_toolkit.dart';
 import 'package:media_editor/main.dart';
@@ -14,7 +13,7 @@ Future<void> main() async {
   await loadAppFonts();
 
   testGoldens('Screenshots', (tester) async {
-    await tester.pumpWidgetBuilder(const MyApp());
+    await tester.pumpWidgetBuilder( const MyApp());
 
     await multiScreenGolden(tester, "Screenshots".toLowerCase(),
         customPump: (p0) => tester.pumpAndSettle(),
