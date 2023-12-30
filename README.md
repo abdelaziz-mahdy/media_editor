@@ -8,7 +8,7 @@ This Flutter application is a versatile tool for image editing, designed to offe
 ## Credits
 The image editing UI and basic logic is derived from the package `extended_image` and its examples, which can be found at [extended_image package on pub.dev](https://pub.dev/packages/extended_image).
 
-The video editing UI and basic logic is derived from the package `video_editor` and its examples, which can be found at [video_editor package on pub.dev](https://pub.dev/packages/video_editor).
+The video editing UI and basic logic is derived from the package `video_editor` and its examples, which can be found at [video_editor package on pub.dev](https://pub.dev/packages/video_editor). note: video_editor_2 is used for web support.
 
 
 ## Features
