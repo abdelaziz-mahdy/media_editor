@@ -25,7 +25,7 @@ class FlatButtonWithIcon extends TextButton {
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               icon,
-              Expanded(child: SizedBox()),
+              const Expanded(child: SizedBox()),
               // const SizedBox(height: 4.0),
               label,
             ],

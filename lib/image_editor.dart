@@ -6,6 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:media_editor/common_image/custom_image.dart';
 import 'package:oktoast/oktoast.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -18,8 +19,9 @@ import 'common_image/common/widget/common_widget.dart';
 // https://pub.dev/packages/extended_image
 
 class ImageEditor extends StatefulWidget {
-  const ImageEditor({super.key});
+  const ImageEditor({super.key, required this.file});
 
+  final XFile file;
   @override
   _ImageEditorState createState() => _ImageEditorState();
 }
@@ -43,11 +45,19 @@ class _ImageEditorState extends State<ImageEditor> {
   String _imageType = "JPG";
   EditorCropLayerPainter? _cropLayerPainter;
   CustomImage? _memoryImage;
+  ValueNotifier loadingNotifier = ValueNotifier(true);
+
 
   @override
   void initState() {
     _aspectRatio = _aspectRatios.first;
     _cropLayerPainter = const EditorCropLayerPainter();
+    Future.microtask(() async {
+      _memoryImage = CustomImage(
+          name: widget.file.name, data: await widget.file.readAsBytes());
+      loadingNotifier.value = false;
+    });
+
     super.initState();
   }
 
@@ -55,16 +65,7 @@ class _ImageEditorState extends State<ImageEditor> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: _memoryImage == null
-            ? null
-            : IconButton(
-                icon: const Icon(Icons.delete),
-                onPressed: () {
-                  setState(() {
-                    _memoryImage = null;
-                  });
-                }),
-        title: const Text('image editor'),
+        title: const Text('Image editor'),
         actions: <Widget>[
           ImageTypeDropdown(
               currentValue: _imageType,
@@ -87,8 +88,13 @@ class _ImageEditorState extends State<ImageEditor> {
       ),
       body: Column(children: <Widget>[
         Expanded(
-          child: _memoryImage != null
-              ? ExtendedImage.memory(
+          child: ValueListenableBuilder(
+              valueListenable: loadingNotifier,
+              builder: (context, loading, child) {
+                if (loading) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+                return ExtendedImage.memory(
                   _memoryImage!.data,
                   fit: BoxFit.contain,
                   mode: ExtendedImageMode.editor,
@@ -105,50 +111,8 @@ class _ImageEditorState extends State<ImageEditor> {
                     );
                   },
                   cacheRawData: true,
-                )
-              : Center(
-                  child: DropTarget(
-                    onDragDone: (details) async {
-                      if (details.files.isNotEmpty) {
-                        CustomImage image = CustomImage(
-                          name: details.files.first.name,
-                          data: await details.files.first.readAsBytes(),
-                        );
-                        setImage(image);
-                      }
-                    },
-                    child: GestureDetector(
-                      onTap: () async {
-                        _getImage();
-                      },
-                      child: Container(
-                        width: MediaQuery.of(context).size.width,
-                        decoration: BoxDecoration(
-                          border: Border.all(color: Colors.grey),
-                          borderRadius: BorderRadius.circular(8.0),
-                        ),
-                        child: const Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.upload_file,
-                              size: 50,
-                              color: Colors.grey,
-                            ),
-                            SizedBox(height: 16),
-                            Text(
-                              "Pick or drop file here",
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
+                );
+              }),
         ),
       ]),
       bottomNavigationBar: BottomAppBar(

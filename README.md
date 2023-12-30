@@ -5,20 +5,24 @@
 This Flutter application is a versatile tool for image editing, designed to offer a user-friendly interface for manipulating images. Whether you're a professional looking to quickly edit images on the go, or a hobbyist wanting to play with your photos, this app provides essential features to get the job done.
 
 
-
+## Credits
 The image editing UI and basic logic is derived from the package `extended_image` and its examples, which can be found at [extended_image package on pub.dev](https://pub.dev/packages/extended_image).
+
+The video editing UI and basic logic is derived from the package `video_editor` and its examples, which can be found at [video_editor package on pub.dev](https://pub.dev/packages/video_editor). note: video_editor_2 is used for web support.
 
 
 ## Features
 
-### Done
+
 - **Image Editing**: Intuitive tools for enhancing your images.
   - **Cropping**: Easily crop images to your preferred size.
   - **Rotation**: Adjust the orientation of your images with simple rotation tools.
   - **Exporting**: Ability to export images in various formats for different use cases.
 
-### To-Do
-- **Video Editing**: Future updates will introduce video editing capabilities, expanding the versatility of the app.
+- **Video Editing**: Newly added features to edit and enhance videos.
+  - **Trimming**: Precisely cut videos to your desired length.
+  - **Cropping**: Adjust the frame of your videos to focus on what matters most.
+  - **Rotation**: Rotate videos to correct their orientation or achieve a unique perspective.
 
 ## Screenshots
 
