@@ -489,7 +489,7 @@ class _VideoEditorState extends State<VideoEditor> {
     debugPrint('run export video command : [$execute]');
 
     if (kIsWeb) {
-      return FFmpegExport().executeFFmpegWeb(
+      return await FFmpegExport().executeFFmpegWeb(
         execute: execute,
         inputData: await _controller.file.readAsBytes(),
         inputPath: inputPath,
@@ -498,7 +498,7 @@ class _VideoEditorState extends State<VideoEditor> {
         onStatistics: onStatistics,
       );
     } else {
-      return FFmpegExport().executeFFmpegIO(
+      return await FFmpegExport().executeFFmpegIO(
         execute: execute,
         outputPath: outputPath,
         outputMimeType: outputFormat.mimeType,
@@ -543,7 +543,7 @@ class _VideoEditorState extends State<VideoEditor> {
     debugPrint('VideoEditor - run export cover command : [$execute]');
 
     if (kIsWeb) {
-      return FFmpegExport().executeFFmpegWeb(
+      return await FFmpegExport().executeFFmpegWeb(
         execute: execute,
         inputData: await coverFile.readAsBytes(),
         inputPath: inputPath,
@@ -551,7 +551,7 @@ class _VideoEditorState extends State<VideoEditor> {
         outputMimeType: outputFormat.mimeType,
       );
     } else {
-      return FFmpegExport().executeFFmpegIO(
+      return await FFmpegExport().executeFFmpegIO(
         execute: execute,
         outputPath: outputPath,
         outputMimeType: outputFormat.mimeType,
