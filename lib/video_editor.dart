@@ -582,10 +582,6 @@ class FFmpegExport {
     return FFmpegExport.instance;
   }
 
-
-
-
-
   Future<XFile> executeFFmpegIO({
     required String execute,
     required String outputPath,
@@ -654,6 +650,8 @@ class FFmpegExport {
       final data = _ffmpegWeb!.readFile(outputPath);
       return XFile.fromData(data, mimeType: outputMimeType);
     } catch (e, s) {
+      print('Exception:\n$e\n\nLogs:${logs.join('\n')}}');
+
       Error.throwWithStackTrace(
         Exception('Exception:\n$e\n\nLogs:${logs.join('\n')}}'),
         s,
