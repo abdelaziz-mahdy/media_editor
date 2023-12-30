@@ -47,7 +47,8 @@ class _MyAppState extends State<MyApp> {
               useMaterial3: true,
             ),
             home: Scaffold(
-              body: UploadMediaWidget(),
+              appBar: AppBar(title: const Text('Flutter Media Editor')),
+              body: const UploadMediaWidget(),
             )));
   }
 }

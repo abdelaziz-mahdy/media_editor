@@ -46,13 +46,15 @@ class _ImageEditorState extends State<ImageEditor> {
   EditorCropLayerPainter? _cropLayerPainter;
   CustomImage? _memoryImage;
   ValueNotifier loadingNotifier = ValueNotifier(true);
+
+
   @override
   void initState() {
     _aspectRatio = _aspectRatios.first;
     _cropLayerPainter = const EditorCropLayerPainter();
     Future.microtask(() async {
       _memoryImage = CustomImage(
-          name: widget.file.name, data: await widget.file.readAsBytes()!);
+          name: widget.file.name, data: await widget.file.readAsBytes());
       loadingNotifier.value = false;
     });
 
