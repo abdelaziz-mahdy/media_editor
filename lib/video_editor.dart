@@ -563,14 +563,13 @@ class _VideoEditorState extends State<VideoEditor> {
 class FFmpegExport {
   // Private constructor
   FFmpegExport._() {
-    _init();
+    // _init();
   }
 
   // The single, static instance, initialized lazily
   static FFmpegExport? _instance;
 
   FFmpeg? _ffmpegWeb;
-  final _initCompleter = Completer<void>(); // Completer for the initialization
 
   // Public static method to access the singleton instance
   static FFmpegExport get instance {
@@ -583,27 +582,9 @@ class FFmpegExport {
     return FFmpegExport.instance;
   }
 
-  // Initialization method
-  Future<void> _init() async {
-    if (!_initCompleter.isCompleted) {
-      await load(); // Load function is called here
-      _initCompleter.complete(); // Mark the initialization as complete
-    }
-  }
 
-  // Public method to wait for initialization
-  static Future<void> ensureInitialized() async {
-    await instance
-        ._initCompleter.future; // Wait for the initialization to complete
-  }
 
-  // Example load function
-  Future<void> load() async {
-    if (kIsWeb) {
-      _ffmpegWeb = createFFmpeg(CreateFFmpegParam(log: false));
-      await _ffmpegWeb!.load();
-    }
-  }
+
 
   Future<XFile> executeFFmpegIO({
     required String execute,
@@ -652,10 +633,7 @@ class FFmpegExport {
     final logs = <String>[];
 
     try {
-      await ensureInitialized();
-      if (_ffmpegWeb == null) {
-        throw Exception('FFmpeg not loaded');
-      }
+      _ffmpegWeb ??= createFFmpeg(CreateFFmpegParam(log: false));
       if (!_ffmpegWeb!.isLoaded()) {
         await _ffmpegWeb!.load();
       }
