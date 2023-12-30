@@ -50,7 +50,7 @@ jobs:
           flutter test --update-goldens
       
       - name: Build Flutter Web
-        run: flutter build web --release --base-href "/media_editor/" --web-renderer canvaskit
+        run: flutter build web --debug --base-href "/media_editor/" --web-renderer canvaskit
       # - name: Build Flutter Web wasm
       #   run: flutter build web --wasm --release --base-href "/bouncy_ball_physics/" --web-renderer canvaskit
       - name: Deploy to GitHub Pages
