@@ -107,6 +107,16 @@ class _VideoResultPopupState extends State<VideoResultPopup> {
                 },
               ),
             ),
+            Positioned(
+              right: 0,
+              top: 0,
+              child: IconButton(
+                  icon:
+                      const Icon(Icons.download, color: Colors.white, size: 30),
+                  onPressed: () {
+                    widget.video.saveTo(widget.video.path);
+                  }),
+            ),
           ],
         ),
       ),

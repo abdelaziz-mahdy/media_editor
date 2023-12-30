@@ -656,6 +656,9 @@ class FFmpegExport {
       if (_ffmpegWeb == null) {
         throw Exception('FFmpeg not loaded');
       }
+      if (!_ffmpegWeb!.isLoaded()) {
+        await _ffmpegWeb!.load();
+      }
       _ffmpegWeb!.setLogger((LoggerParam logger) {
         logs.add('[${logger.type}] ${logger.message}');
 
