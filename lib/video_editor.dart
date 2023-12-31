@@ -116,8 +116,9 @@ class _VideoEditorState extends State<VideoEditor> {
           builder: (_) => CoverResultPopup(cover: cover),
         );
       }
-    } catch (e) {
-      _showErrorSnackBar("Error on cover exportation :(");
+    } catch (e, stack) {
+      _showErrorSnackBar("Error on cover exportation :( ${e.toString()}");
+      print("Error on cover exportation :( $e\n $stack");
     }
   }
 

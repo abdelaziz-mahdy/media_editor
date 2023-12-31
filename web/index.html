@@ -45,6 +45,17 @@
 
 <body>
   <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function () {
+        // Retrieve the base href value
+        var baseHref = document.querySelector('base').getAttribute('href');
+
+        // Register the service worker with the base href
+        navigator.serviceWorker.register(baseHref + 'service-worker.js');
+      });
+    }
+  </script>
+  <script>
     window.addEventListener('load', function (ev) {
       // Download main.dart.js
       _flutter.loader.loadEntrypoint({
