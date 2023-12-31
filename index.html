@@ -37,24 +37,14 @@
 
   <script>
     // The value below is injected by flutter build, do not touch.
-    const serviceWorkerVersion = "4279189253";
+    const serviceWorkerVersion = "3630884313";
   </script>
   <!-- This script adds the flutter initialization JS code -->
   <script src="flutter.js" defer></script>
 </head>
 
 <body>
-  <script>
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', function () {
-        // Retrieve the base href value
-        var baseHref = document.querySelector('base').getAttribute('href');
-
-        // Register the service worker with the base href
-        navigator.serviceWorker.register(baseHref + 'service-worker.js');
-      });
-    }
-  </script>
+  <script src="service-worker.js"></script>
   <script>
     window.addEventListener('load', function (ev) {
       // Download main.dart.js
