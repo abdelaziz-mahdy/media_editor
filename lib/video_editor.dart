@@ -649,17 +649,16 @@ class FFmpegExport {
       await _ffmpegWeb!.runCommand(execute);
 
       final data = _ffmpegWeb!.readFile(outputPath);
+      // _ffmpegWeb?.exit();
       return XFile.fromData(data, mimeType: outputMimeType);
-    } catch (e, s) {
-      print('Exception:\n$e\n\nLogs:${logs.join('\n')}}');
 
-      Error.throwWithStackTrace(
-        Exception('Exception:\n$e\n\nLogs:${logs.join('\n')}}'),
-        s,
-      );
-    } finally {
-      _ffmpegWeb?.exit();
+    } catch (e) {
+      throw Exception(
+          'Failed to execute command: $execute, Exception:\n$e\n\nLogs:${logs.join('\n')}}');
     }
+    // } finally {
+    //   _ffmpegWeb?.exit();
+    // }
   }
 }
 
