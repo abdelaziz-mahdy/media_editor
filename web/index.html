@@ -44,6 +44,21 @@
 </head>
 
 <body>
+  <script>
+    const reloadedBySelf = window.sessionStorage.getItem("coiReloadedBySelf");
+    window.sessionStorage.removeItem("coiReloadedBySelf");
+    const coepDegrading = (reloadedBySelf == "coepdegrade");
+
+    // You can customize the behavior of this script through a global `coi` variable.
+    const coi = {
+      shouldRegister: () => !reloadedBySelf,
+      shouldDeregister: () => false,
+      coepCredentialless: () => true,
+      coepDegrade: () => true,
+      doReload: () => window.location.reload(true),
+      quiet: false,
+    };
+  </script>
   <script src="service-worker.js"></script>
   <script>
     window.addEventListener('load', function (ev) {
